@@ -1,0 +1,17 @@
+%form{:action => url('/add'), :method => 'post'}
+  Url :
+  %input{:type => 'text', :name => 'url'}
+  %br
+  Category :
+  %select{:name => 'category'}
+    - @cats.each do |cat|
+      %option{:value => cat[0]}
+        #{cat[1]}
+  %br
+  Title :
+  %input{:type => 'text', :name => 'title'}
+  %br
+  Description :
+  %textarea{:rows => '2', :cols => '20', :name => "description"}
+  %br
+  %input{:type => 'submit', :value => 'Go !'}

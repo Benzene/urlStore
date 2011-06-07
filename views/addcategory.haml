@@ -1,0 +1,11 @@
+%form{:action => url('/addcategory'), :method => 'post'}
+  Category shortname :
+  %input{:type => 'text', :name => 'shortname'}
+  %br
+  Category name:
+  %input{:type => 'text', :name => 'title'}
+  %br
+  Category description:
+  %input{:type => 'text', :name => 'description'}
+  %br
+  %input{:type => 'submit', :value => 'Ok.'}

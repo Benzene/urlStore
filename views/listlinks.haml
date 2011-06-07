@@ -1,0 +1,10 @@
+%ul
+  - @links.each do |link|
+    %li
+      <a class="internal" href="#{link[0]}" title="#{link[1]}">#{link[1]}</a> : #{link[2]}
+      %br
+      Added #{link[3]}.
+      - if link[4] == 1 then
+        Read.
+      - else
+        Not read.

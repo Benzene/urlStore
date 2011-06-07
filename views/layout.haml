@@ -1,0 +1,20 @@
+!!! Strict
+%html
+  %head
+    %title urlStore Dashboard
+    %style{:type => "text/css", :media => "screen"}
+      :plain
+        body { font-family: Arial, sans-serif; }
+        a, a:visited { text-decoration: none; color: black }
+        #header { font-weight: bold; font-size: 25px; margin: 10px; border: none; }
+        a:hover.internal { border-bottom: 1px dotted; }
+  %body
+    #header
+      %a{:href => url('/')}
+        urlStore Dashboard
+    %a.internal{:href => url('/add')}
+      Add link...
+    %br
+    %a.internal{:href => url('/addcategory')}
+      Add category...
+    = yield
