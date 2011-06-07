@@ -12,9 +12,10 @@
     #header
       %a{:href => url('/')}
         urlStore Dashboard
-    %a.internal{:href => url('/add')}
-      Add link...
-    %br
-    %a.internal{:href => url('/addcategory')}
-      Add category...
+    - if is_authed?    
+      %a.internal{:href => url('/add')}
+        Add link...
+      %br
+      %a.internal{:href => url('/addcategory')}
+        Add category...
     = yield
