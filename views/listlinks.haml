@@ -5,6 +5,6 @@
       %br
       Added #{link[3]}.
       - if link[4] == 1 then
-        Read.
+        <a class="internal" id="readstatus_#{link[5]}" href="#" title="Mark unread" onclick="markread(#{link[5]})">Read</a>
       - else
-        Not read.
+        <a class="internal" id="readstatus_#{link[5]}" href="#" title="Mark read" onclick="markread(#{link[5]})">Unread</a>

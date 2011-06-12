@@ -66,7 +66,7 @@ end
 get '/list/:category' do
 	require_auth
 	pair = [ session[:user], params[:category] ]
-	@links = @db.execute("SELECT url, title, description, date, read FROM urls WHERE added_by=? AND category=?", pair)
+	@links = @db.execute("SELECT url, title, description, date, read, id FROM urls WHERE added_by=? AND category=?", pair)
 	haml :listlinks
 end
 
@@ -128,4 +128,20 @@ post '/register' do
 	pair = [ params[:user], BCrypt::Password.create(params[:pass]), params[:email] ]
 	@db.execute("INSERT INTO users (username,hashed_pass,email) VALUES(?,?,?)", pair)
 	redirect url('/')
+end
+
+# More 'RESTful' requests. Supposed to be called from inside the app, via js.
+post '/s/read/:id/:value' do
+	if (params[:value] == "0" || params[:value] == "1") then
+		require_auth
+		pair = [ params[:value], session[:user], params[:id] ]
+		@db.execute("UPDATE urls SET read=? WHERE added_by=? AND id=?", pair)
+		if (@db.changes > 0) then
+			201
+		else
+			400
+		end
+	else
+		400
+	end
 end
