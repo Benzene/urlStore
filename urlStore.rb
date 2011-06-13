@@ -46,8 +46,8 @@ end
 
 get '/' do
 	require_auth
-	pair = [ session[:user] ]
-	@cats = @db.execute("SELECT shortname, title, description FROM categories WHERE belongs_to=?", pair)
+	pair = [ session[:user], session[:user], session[:user] ]
+	@cats = @db.execute("SELECT shortname, title, description, IFNULL(c1.cnt, 0), IFNULL(c2.cnt, 0) FROM categories LEFT JOIN (SELECT category, read, COUNT(id) as cnt FROM urls WHERE added_by=? AND read=0 GROUP BY category) AS c1 ON categories.shortname=c1.category LEFT JOIN (SELECT category, read, COUNT(id) as cnt FROM urls WHERE added_by=? AND read=1 GROUP BY category) AS c2 ON categories.shortname=c2.category WHERE belongs_to=?", pair)
 	haml :listcats
 end
 

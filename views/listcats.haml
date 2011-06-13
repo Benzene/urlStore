@@ -2,3 +2,8 @@
   - @cats.each do |cat|
     %li
       <a class="internal" href=#{url("list/#{cat[0]}")} title="#{cat[1]}">#{cat[1]}</a> (#{cat[2]})
+      - if cat[3] > 0 then
+        (#{cat[3] + cat[4]} links, #{cat[3]} unread)
+      - else
+        (#{cat[3] + cat[4]} links)
+
