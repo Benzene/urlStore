@@ -2,43 +2,7 @@ require 'sinatra'
 require 'sqlite3'
 require 'bcrypt'
 
-class AuthenticationError < StandardError; end
-class ParameterError < StandardError; end
-
-use Rack::Session::Pool, :expire => 60 * 60 * 24
-
-error AuthenticationError do
-	"Authentication failed !"
-	redirect url('/login')
-end
-
-error ParameterError do
-	"Wrong parameters given !"
-end
-
-helpers do
-	def is_authed?
-		!session[:user].nil?
-	end
-	def auth(user, pass)
-		raise AuthenticationError, 'No credentials given' unless (user.is_a?(String) && pass.is_a?(String))
-		pair = [ user ]
-		res = @db.execute("SELECT hashed_pass FROM users WHERE username=?", pair)
-		raise AuthenticationError, 'Invalid credentials (username not found)' unless res.length > 0
-		raise AuthenticationError, 'Invalid credentials (wrong password)' unless BCrypt::Password.new(res[0][0]) == pass
-		session[:user] = user
-	end
-	def require_auth
-		if !is_authed? then
-			redirect url('/login')
-		end
-	end
-	def require_non_auth
-		if is_authed? then
-			redirect url('/')
-		end
-	end
-end
+require_relative 'login-commons/loginHandler'
 
 before do
 	@db = SQLite3::Database.new "urls.db"
@@ -49,18 +13,6 @@ get '/' do
 	pair = [ session[:user], session[:user], session[:user] ]
 	@cats = @db.execute("SELECT shortname, title, description, IFNULL(c1.cnt, 0), IFNULL(c2.cnt, 0) FROM categories LEFT JOIN (SELECT category, read, COUNT(id) as cnt FROM urls WHERE added_by=? AND read=0 GROUP BY category) AS c1 ON categories.shortname=c1.category LEFT JOIN (SELECT category, read, COUNT(id) as cnt FROM urls WHERE added_by=? AND read=1 GROUP BY category) AS c2 ON categories.shortname=c2.category WHERE belongs_to=?", pair)
 	haml :listcats
-end
-
-get '/login' do
-	require_non_auth
-	haml :login
-end
-
-post '/login' do
-	require_non_auth
-	auth(params[:user], params[:pass])
-	is_authed?
-	redirect url('/')
 end
 
 get '/list/:category' do
@@ -117,16 +69,6 @@ post '/addcategory' do
 	@description = params[:description]
 	pair = [ @shortname, @title, @description, session[:user] ]
 	@db.execute("INSERT INTO categories (shortname, title, description, belongs_to) VALUES (?, ?, ?, ?)", pair)
-	redirect url('/')
-end
-
-get '/register' do
-	haml :register
-end
-
-post '/register' do
-	pair = [ params[:user], BCrypt::Password.create(params[:pass]), params[:email] ]
-	@db.execute("INSERT INTO users (username,hashed_pass,email) VALUES(?,?,?)", pair)
 	redirect url('/')
 end
 

@@ -1,0 +1,3 @@
+[submodule "login-commons"]
+	path = login-commons
+	url = git://github.com/Benzene/login-commons.git
